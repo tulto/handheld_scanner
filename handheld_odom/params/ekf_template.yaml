@@ -23,7 +23,7 @@ world_frame: odom           # Defaults to the value of odom_frame if unspecified
 
 
 # Encoder Odometry
-odom0: /odom/data
+odom0: /vo
 # values is x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Note that not some message types
 odom0_config: [true, true, false,
                false, false, true,
@@ -32,8 +32,8 @@ odom0_config: [true, true, false,
                false, false, false]
 
 odom0_nodelay: false
-odom0_queue_size: 2
-odom0_differential: true
+odom0_queue_size: 5
+odom0_differential: false
 odom0_relative: false
 #odom0_pose_rejection_threshold: 5
 #odom0_twist_rejection_threshold: 1
@@ -43,8 +43,8 @@ imu0: /imu/data
 imu0_config: [false, false, false,
               true, true, true,
               false, false, false,
-              true, true, true,
-              true, true, true]
+              false, false, false,
+              false, false, false,]
 imu0_nodelay: false
 imu0_differential: false
 imu0_queue_size: 50

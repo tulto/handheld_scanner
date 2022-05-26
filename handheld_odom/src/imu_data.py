@@ -51,11 +51,10 @@ def get_quaternion_from_euler(roll, pitch, yaw):
 # imu orientations data will be saved inside global variable
 def imu_orient(msg):
     global msg_orient  # to get global data point
-    quat = get_quaternion_from_euler(msg.z, -msg.y, -msg.x)
-    msg_orient.x = quat[0]
-    msg_orient.y = quat[1]
-    msg_orient.z = quat[2]
-    msg_orient.w = quat[3]
+    msg_orient.x = msg.x
+    msg_orient.y = msg.y
+    msg_orient.z = msg.z
+    msg_orient.w = msg.w
 
 
 # imu acceleration data will be saved inside global variable
@@ -87,7 +86,7 @@ if __name__ == '__main__':
     seq = 0
     rospy.init_node("odometry_imu_node")
 
-    sub = rospy.Subscriber("/imu/orient", Vector3, imu_orient)
+    sub = rospy.Subscriber("/imu/orient", Quaternion, imu_orient)
     sub = rospy.Subscriber("/imu/accel", Vector3, imu_accel)
     sub = rospy.Subscriber("/imu/gyro", Vector3, imu_gyro)
     sub = rospy.Subscriber("/imu/head", Header, imu_head)
