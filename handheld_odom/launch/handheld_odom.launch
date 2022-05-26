@@ -1,0 +1,27 @@
+<launch> 
+  <?Connection between Arduino and PC?>
+  <node name="serial_node"        pkg="rosserial_arduino"      type="serial_node.py">
+    <param name="port"              type="string"               value="/dev/ttyUSB0"/>
+    <param name="baud"              type="int"                  value="57600"/>
+  </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="imu_link_broadcaster" args="0 0 0 0 0 0 1 base_link imu_link 10" />
+  
+  <?Setting imu odom together from multiple topics (->arduino can send faster)?>
+  <node pkg="handheld_odom" type="imu_data.py" name="odometry_imu_node" >
+    <rosparam param="orientation_covariance">[0.1,0.,0.,  0.,0.1,0.,  0.,0.,0.1]</rosparam>
+    <rosparam param="gyro_covariance">[0.2,0.,0.,  0.,0.2,0.,  0.,0.,0.2]</rosparam>
+    <rosparam param="accel_covariance">[0.8,0.,0.,  0.,0.8,0.,  0.,0.,0.8]</rosparam>
+  </node>
+
+  
+  <?Sensorfusion over Kalman Filter?>
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+    <rosparam command="load" file="$(find handheld_odom)/params/ekf_template.yaml" />
+
+    <!--  Placeholder for output topic remapping
+    <remap from="odometry/filtered" to="odom"/>
+    <remap from="accel/filtered" to=""/>
+    -->
+  </node>
+</launch>
