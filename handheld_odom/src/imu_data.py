@@ -60,7 +60,9 @@ def imu_orient(msg):
 # imu acceleration data will be saved inside global variable
 def imu_accel(msg):
     global msg_accel  # to get global data point
-    msg_accel = msg
+    msg_accel.x = msg.x
+    msg_accel.y = msg.y
+    msg_accel.z = msg.z
 
 
 # imu gyro data will be saved inside global variable
@@ -87,7 +89,7 @@ if __name__ == '__main__':
     rospy.init_node("odometry_imu_node")
 
     sub = rospy.Subscriber("/imu/orient", Quaternion, imu_orient)
-    sub = rospy.Subscriber("/imu/accel", Vector3, imu_accel)
+    sub = rospy.Subscriber("/imu/accel", Quaternion, imu_accel)
     sub = rospy.Subscriber("/imu/gyro", Vector3, imu_gyro)
     sub = rospy.Subscriber("/imu/head", Header, imu_head)
     pub = rospy.Publisher("/imu/data", Imu, queue_size=10)

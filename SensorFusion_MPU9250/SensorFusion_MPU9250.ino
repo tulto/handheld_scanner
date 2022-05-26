@@ -8,12 +8,12 @@
 #include <Wire.h>
 #include <ros.h>
 #include <geometry_msgs/Quaternion.h>
+#include <geometry_msgs/Vector3.h>
 #include <std_msgs/Header.h>
 #define MPU9250_ADDR 0x68
 SF fusion;
 
-float gx, gy, gz, ax, ay, az; //, mx, my, mz;
-//float pitch, roll, yaw;
+float gx, gy, gz, ax, ay, az;//, mx, my, mz;
 float deltat;
 
 MPU9250_WE myMPU9250 = MPU9250_WE(MPU9250_ADDR);
@@ -21,9 +21,11 @@ MPU9250_WE myMPU9250 = MPU9250_WE(MPU9250_ADDR);
 ros::NodeHandle nh;
 
 geometry_msgs::Quaternion orient_msg;
+geometry_msgs::Quaternion data_msg;
 std_msgs::Header head_msg;
 
 ros::Publisher ori("/imu/orient", &orient_msg);
+ros::Publisher ac("/imu/accel", &data_msg);
 ros::Publisher he("/imu/head", &head_msg);
 
 
@@ -32,12 +34,13 @@ void setup() {
   nh.initNode();
   
   nh.advertise(ori);
+  nh.advertise(ac);
   nh.advertise(he);
   
   // your IMU begin code goes here
   Wire.begin();
   myMPU9250.init();
-  myMPU9250.initMagnetometer();
+  //myMPU9250.initMagnetometer();
 
 
   myMPU9250.autoOffsets();
@@ -159,9 +162,11 @@ void loop() {
   orient_msg.z = fusion.getQuat()[3];
   ori.publish(&orient_msg);
 
+  
+
   head_msg.stamp = nh.now();
   head_msg.frame_id = "imu_link";
-  he.publish( &head_msg );  
+  he.publish( &head_msg ); 
   delay(20); 
   nh.spinOnce();
 }
@@ -179,10 +184,11 @@ void imu_data(){
   ax = gValue.x*9.81;
   ay = gValue.y*9.81;
   az = gValue.z*9.81;
-  //mx = magValue.x;
-  //my = magValue.y;
-  //mz = magValue.z;
 
+  data_msg.x = ax;
+  data_msg.y = ay;
+  data_msg.z = az;
+  ac.publish(&data_msg);
 
   deltat = fusion.deltatUpdate(); //this have to be done before calling the fusion update
   //choose only one of these two:

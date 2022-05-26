@@ -11,7 +11,7 @@
   <node pkg="handheld_odom" type="imu_data.py" name="odometry_imu_node" >
     <rosparam param="orientation_covariance">[0.1,0.,0.,  0.,0.1,0.,  0.,0.,0.1]</rosparam>
     <rosparam param="gyro_covariance">[0.2,0.,0.,  0.,0.2,0.,  0.,0.,0.2]</rosparam>
-    <rosparam param="accel_covariance">[0.8,0.,0.,  0.,0.8,0.,  0.,0.,0.8]</rosparam>
+    <rosparam param="accel_covariance">[0.5,0.,0.,  0.,0.5,0.,  0.,0.,0.5]</rosparam>
   </node>
 
   
