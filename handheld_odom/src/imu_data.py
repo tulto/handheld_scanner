@@ -51,10 +51,12 @@ def get_quaternion_from_euler(roll, pitch, yaw):
 # imu orientations data will be saved inside global variable
 def imu_orient(msg):
     global msg_orient  # to get global data point
-    msg_orient.x = msg.x
-    msg_orient.y = msg.y
-    msg_orient.z = msg.z
-    msg_orient.w = msg.w
+    #quat = get_quaternion_from_euler(msg.x, msg.y, msg.z)
+    #msg_orient.x = quat[0]
+    #msg_orient.y = quat[1]
+    #msg_orient.z = quat[2]
+    #msg_orient.w = quat[3]
+    msg_orient = msg
 
 
 # imu acceleration data will be saved inside global variable

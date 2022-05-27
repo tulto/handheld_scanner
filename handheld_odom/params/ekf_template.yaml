@@ -51,7 +51,7 @@ imu0_queue_size: 50
 imu0_relative: false
 #imu0_pose_rejection_threshold: 1            # Note the difference in parameter names
 #imu0_twist_rejection_threshold: 0.6                #
-imu0_linear_acceleration_rejection_threshold: 1  #
+#imu0_linear_acceleration_rejection_threshold: 2  #
 imu0_remove_gravitational_acceleration: true
 
 # [ADVANCED]  The EKF and UKF models follow a standard predict/correct cycle. During prediction, if there is no

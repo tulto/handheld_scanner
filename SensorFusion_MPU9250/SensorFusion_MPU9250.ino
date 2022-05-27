@@ -8,7 +8,6 @@
 #include <Wire.h>
 #include <ros.h>
 #include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Vector3.h>
 #include <std_msgs/Header.h>
 #define MPU9250_ADDR 0x68
 SF fusion;
@@ -20,11 +19,11 @@ MPU9250_WE myMPU9250 = MPU9250_WE(MPU9250_ADDR);
 
 ros::NodeHandle nh;
 
-geometry_msgs::Quaternion orient_msg;
+//geometry_msgs::Quaternion orient_msg;
 geometry_msgs::Quaternion data_msg;
 std_msgs::Header head_msg;
 
-ros::Publisher ori("/imu/orient", &orient_msg);
+ros::Publisher ori("/imu/orient", &data_msg);
 ros::Publisher ac("/imu/accel", &data_msg);
 ros::Publisher he("/imu/head", &head_msg);
 
@@ -156,18 +155,18 @@ void loop() {
   // if you have them in degree convert them with: DEG_TO_RAD example: gx * DEG_TO_RAD
   imu_data();
   
-  orient_msg.w = fusion.getQuat()[0];
-  orient_msg.x = fusion.getQuat()[1];
-  orient_msg.y = fusion.getQuat()[2];
-  orient_msg.z = fusion.getQuat()[3];
-  ori.publish(&orient_msg);
+  data_msg.x = fusion.getQuat()[2];
+  data_msg.y = -fusion.getQuat()[1];
+  data_msg.z = fusion.getQuat()[3];
+  data_msg.w = fusion.getQuat()[0];
+  ori.publish(&data_msg);
 
   
 
   head_msg.stamp = nh.now();
   head_msg.frame_id = "imu_link";
   he.publish( &head_msg ); 
-  delay(20); 
+  delay(10);
   nh.spinOnce();
 }
 
