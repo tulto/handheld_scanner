@@ -15,6 +15,7 @@ SF fusion;
 float gx, gy, gz, ax, ay, az;//, mx, my, mz;
 float deltat;
 
+
 MPU9250_WE myMPU9250 = MPU9250_WE(MPU9250_ADDR);
 
 ros::NodeHandle nh;
@@ -42,21 +43,21 @@ void setup() {
   //myMPU9250.initMagnetometer();
 
 
-  myMPU9250.autoOffsets();
+  //myMPU9250.autoOffsets();
   
   /*  This is a more accurate method for calibration. You have to determine the minimum and maximum 
    *  raw acceleration values of the axes determined in the range +/- 2 g. 
    *  You call the function as follows: setAccOffsets(xMin,xMax,yMin,yMax,zMin,zMax);
    *  Use either autoOffset or setAccOffsets, not both.
    */
-  //myMPU9250.setAccOffsets(-14240.0, 18220.0, -17280.0, 15590.0, -20930.0, 12080.0);
+  myMPU9250.setAccOffsets(-8170.0, 8240.0, -8160.0, 8200.0, -8992.0, 7650.0);
 
   /*  The gyroscope data is not zero, even if you don't move the MPU9250. 
    *  To start at zero, you can apply offset values. These are the gyroscope raw values you obtain
    *  using the +/- 250 degrees/s range. 
    *  Use either autoOffset or setGyrOffsets, not both.
    */
-  //myMPU9250.setGyrOffsets(45.0, 145.0, -105.0);
+  myMPU9250.setGyrOffsets(-98.0, -10.0, -25.0);
 
   /*  You can enable or disable the digital low pass filter (DLPF). If you disable the DLPF, you 
    *  need to select the bandwdith, which can be either 8800 or 3600 Hz. 8800 Hz has a shorter delay,
@@ -96,7 +97,7 @@ void setup() {
    *  MPU9250_GYRO_RANGE_1000     1000 degrees per second
    *  MPU9250_GYRO_RANGE_2000     2000 degrees per second
    */
-  myMPU9250.setGyrRange(MPU9250_GYRO_RANGE_1000);
+  myMPU9250.setGyrRange(MPU9250_GYRO_RANGE_500);
 
   /*  MPU9250_ACC_RANGE_2G      2 g   (default)
    *  MPU9250_ACC_RANGE_4G      4 g
@@ -156,7 +157,7 @@ void loop() {
   imu_data();
   
   data_msg.x = fusion.getQuat()[2];
-  data_msg.y = -fusion.getQuat()[1];
+  data_msg.y = fusion.getQuat()[1];
   data_msg.z = fusion.getQuat()[3];
   data_msg.w = fusion.getQuat()[0];
   ori.publish(&data_msg);
@@ -168,21 +169,23 @@ void loop() {
   he.publish( &head_msg ); 
   delay(10);
   nh.spinOnce();
+  
 }
 
 
 void imu_data(){
-  xyzFloat gValue = myMPU9250.getGValues();
+  xyzFloat gValue = myMPU9250.getCorrectedAccRawValues();
   xyzFloat gyr = myMPU9250.getGyrValues();
   //xyzFloat magValue = myMPU9250.getMagValues();
-  //float resultantG = myMPU9250.getResultantG(gValue);
-  
+  float resultantG = myMPU9250.getResultantG(gValue);
+
   gx = gyr.x/57.296;
   gy = gyr.y/57.296;
   gz = gyr.z/57.296;
-  ax = gValue.x*9.81;
-  ay = gValue.y*9.81;
-  az = gValue.z*9.81;
+
+  ax = gValue.x/835.066;
+  ay = gValue.y/835.066;
+  az = gValue.z/835.066;
 
   data_msg.x = ax;
   data_msg.y = ay;
@@ -193,5 +196,5 @@ void imu_data(){
   //choose only one of these two:
   fusion.MahonyUpdate(gx, gy, gz, ax, ay, az, deltat);  //mahony is suggested if there isn't the mag and the mcu is slow
   //fusion.MadgwickUpdate(gx, gy, gz, ax, ay, az, mx, my, mz, deltat);  //else use the magwick, it is slower but more accurate
-  
+
 }
