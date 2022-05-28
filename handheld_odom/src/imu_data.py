@@ -56,7 +56,10 @@ def imu_orient(msg):
     #msg_orient.y = quat[1]
     #msg_orient.z = quat[2]
     #msg_orient.w = quat[3]
-    msg_orient = msg
+    msg_orient.x = msg.y
+    msg_orient.y = msg.x
+    msg_orient.z = msg.z
+    msg_orient.w = msg.w
 
 
 # imu acceleration data will be saved inside global variable

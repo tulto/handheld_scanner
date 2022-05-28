@@ -5,13 +5,15 @@
     <param name="baud"              type="int"                  value="57600"/>
   </node>
 
+
   <node pkg="tf" type="static_transform_publisher" name="imu_link_broadcaster" args="0 0 0 0 0 0 1 base_link imu_link 10" />
+  <node pkg="tf" type="static_transform_publisher" name="camera_link_broadcaster" args="0 0 0 0 0 0 1 base_link camera_link 10" />
   
   <?Setting imu odom together from multiple topics (->arduino can send faster)?>
   <node pkg="handheld_odom" type="imu_data.py" name="odometry_imu_node" >
     <rosparam param="orientation_covariance">[0.1,0.,0.,  0.,0.1,0.,  0.,0.,0.1]</rosparam>
     <rosparam param="gyro_covariance">[0.2,0.,0.,  0.,0.2,0.,  0.,0.,0.2]</rosparam>
-    <rosparam param="accel_covariance">[0.5,0.,0.,  0.,0.5,0.,  0.,0.,0.5]</rosparam>
+    <rosparam param="accel_covariance">[0.05,0.,0.,  0.,0.05,0.,  0.,0.,0.05]</rosparam>
   </node>
 
   
